@@ -15,6 +15,13 @@ public class ObjectFactory {
 
     private static final Faker faker = new Faker();
 
+    public static StoreRequest storeRequest() {
+        StoreRequest storeRequest = new StoreRequest();
+        storeRequest.setName("Store Name");
+        storeRequest.setLocation("Store Location");
+        return storeRequest;
+    }
+
     public static Store createStore() {
         Store store = new Store();
         store.setId(UUID.randomUUID());
@@ -44,6 +51,12 @@ public class ObjectFactory {
     public static Product createProduct(Store store) {
         Product product = createProduct();
         product.setStore(store);
+        return product;
+    }
+
+    public static Product createProduct(Store store, String sku) {
+        Product product = createProduct(store);
+        product.setSku(sku);
         return product;
     }
 
