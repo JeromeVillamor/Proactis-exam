@@ -13,12 +13,13 @@ import java.util.UUID;
 @Setter
 @ToString
 @NoArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"store_id", "sku"}))
 public class Product extends BaseModel {
 
     @Id
     private UUID id;
 
-    @Column(nullable = false, length = 30, unique = true)
+    @Column(nullable = false, length = 30)
     private String sku;
 
     @Column(nullable = false, length = 100)

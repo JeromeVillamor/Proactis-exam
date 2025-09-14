@@ -39,38 +39,39 @@ public class StoreService {
     public StoreResponse create(StoreRequest request) {
         Store store = storeRepository.save(request.toStore());
 
-        long numberOfProducts = storeRepository.findStoreProductCountsById(store.getId());
+        long numberOfProducts = storeRepository.findStoreProductCountsByName(store.getName());
         return StoreResponse.fromStore(store, numberOfProducts);
     }
 
-    public StoreResponse find(UUID id) {
-        Store store = this.getStore(id);
-        long numberOfProducts = storeRepository.findStoreProductCountsById(id);
+    public StoreResponse find(String name) {
+        Store store = this.getStore(name);
+        long numberOfProducts = storeRepository.findStoreProductCountsByName(name);
         return StoreResponse.fromStore(store, numberOfProducts);
     }
 
-    public StoreResponse update(UUID id, StoreRequest request) {
-        Store store = this.getStore(id);
+    public StoreResponse update(String name, StoreRequest request) {
+        Store store = this.getStore(name);
         store.setName(request.getName());
         store.setLocation(request.getLocation());
 
         Store savedStore = storeRepository.save(store);
-        long numberOfProducts = storeRepository.findStoreProductCountsById(id);
+        long numberOfProducts = storeRepository.findStoreProductCountsByName(request.getName());
         return StoreResponse.fromStore(savedStore, numberOfProducts);
     }
 
-    public void destroy(UUID id) {
-        long numberOfProducts = storeRepository.findStoreProductCountsById(id);
+    public void destroy(String name) {
+        long numberOfProducts = storeRepository.findStoreProductCountsByName(name);
 
         if(numberOfProducts > 0) {
             throw new StoreHasProductsException();
         }
 
-        storeRepository.deleteById(id);
+        Store store = this.getStore(name);
+        storeRepository.delete(store);
     }
 
-    public Store getStore(UUID id) {
-        return storeRepository.findById(id)
+    public Store getStore(String name) {
+        return storeRepository.findByName(name)
                 .orElseThrow(StoreNotFoundException::new);
     }
 }

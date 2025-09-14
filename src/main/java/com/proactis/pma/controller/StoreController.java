@@ -30,24 +30,24 @@ public class StoreController {
         return ResponseEntity.ok(storeResponse);
     }
 
-    @GetMapping("/store/{id}")
-    public ResponseEntity<StoreResponse> show(@PathVariable UUID id) {
-        StoreResponse storeResponse = storeService.find(id);
+    @GetMapping("/store/{name}")
+    public ResponseEntity<StoreResponse> show(@PathVariable String name) {
+        StoreResponse storeResponse = storeService.find(name);
         return ResponseEntity.ok(storeResponse);
     }
 
-    @PatchMapping("/store/{id}")
+    @PatchMapping("/store/{name}")
     public ResponseEntity<StoreResponse> update(
-            @PathVariable UUID id,
+            @PathVariable String name,
             @Valid @RequestBody StoreRequest request
     ) {
-        StoreResponse storeResponse = storeService.update(id, request);
+        StoreResponse storeResponse = storeService.update(name, request);
         return ResponseEntity.ok(storeResponse);
     }
 
-    @DeleteMapping("/store/{id}")
-    public ResponseEntity<Void> destroy(@PathVariable UUID id) {
-        storeService.destroy(id);
+    @DeleteMapping("/store/{name}")
+    public ResponseEntity<Void> destroy(@PathVariable String name) {
+        storeService.destroy(name);
         return ResponseEntity.noContent().build();
     }
 }

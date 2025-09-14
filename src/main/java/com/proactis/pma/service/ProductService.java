@@ -20,8 +20,8 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public List<ProductResponse> getProductsByStore(UUID storeId) {
-        Store store = storeService.getStore(storeId);
+    public List<ProductResponse> getProductsByStore(String storeName) {
+        Store store = storeService.getStore(storeName);
         List<Product> products = store.getProducts();
 
         return products.stream()
@@ -29,8 +29,8 @@ public class ProductService {
                 .toList();
     }
 
-    public ProductResponse create(UUID storeId, ProductRequest request) {
-        Store store = storeService.getStore(storeId);
+    public ProductResponse create(String storeName, ProductRequest request) {
+        Store store = storeService.getStore(storeName);
 
         Product product = request.toProduct();
         product.setStore(store);
@@ -39,8 +39,8 @@ public class ProductService {
         return ProductResponse.fromProduct(saveProduct);
     }
 
-    public List<ProductResponse> createBulk(UUID storeId, List<ProductRequest> requests) {
-        Store store = storeService.getStore(storeId);
+    public List<ProductResponse> createBulk(String storeName, List<ProductRequest> requests) {
+        Store store = storeService.getStore(storeName);
 
         List<Product> products = requests.stream()
                 .map(r -> {
@@ -58,13 +58,13 @@ public class ProductService {
                 .toList();
     }
 
-    public ProductResponse find(UUID storeId, UUID id) {
-        Product product = this.getProductById(storeId, id);
+    public ProductResponse find(String storeName, UUID id) {
+        Product product = this.getProductById(storeName, id);
         return ProductResponse.fromProduct(product);
     }
 
-    public ProductResponse update(UUID storeId, UUID id, ProductRequest request) {
-        Product product = this.getProductById(storeId, id);
+    public ProductResponse update(String storeName, UUID id, ProductRequest request) {
+        Product product = this.getProductById(storeName, id);
         product.setName(request.getName());
         product.setSku(request.getSku());
 
@@ -73,16 +73,16 @@ public class ProductService {
     }
 
 
-    public void destroy(UUID storeId, UUID id) {
-        Product product = this.getProductById(storeId, id);
-        productRepository.deleteById(id);
+    public void destroy(String storeName, UUID id) {
+        Product product = this.getProductById(storeName, id);
+        productRepository.delete(product);
     }
 
-    private Product getProductById(UUID storeId, UUID id) {
+    private Product getProductById(String storeName, UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
-        if(! product.getStore().getId().equals(storeId)) {
+        if(! product.getStore().getName().equals(storeName)) {
             throw new ProductNotFoundException("Product is not under store");
         }
 
